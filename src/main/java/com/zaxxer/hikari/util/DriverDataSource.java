@@ -15,20 +15,15 @@
  */
 package com.zaxxer.hikari.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.sql.DataSource;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
+import java.sql.*;
 import java.util.Enumeration;
 import java.util.Map.Entry;
 import java.util.Properties;
-
-import javax.sql.DataSource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class DriverDataSource implements DataSource
 {
@@ -67,7 +62,7 @@ public final class DriverDataSource implements DataSource
          if (driver == null) {
             LOGGER.warn("Registered driver with driverClassName={} was not found, trying direct instantiation.", driverClassName);
             try {
-               Class<?> driverClass = this.getClass().getClassLoader().loadClass(driverClassName);
+               Class<?> driverClass = Thread.currentThread().getContextClassLoader().loadClass(driverClassName);
                driver = (Driver) driverClass.newInstance();
             }
             catch (Exception e) {
